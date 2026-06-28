@@ -6,7 +6,6 @@ import re
 import pytesseract
 
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-
 # ---------------- CONFIG ----------------
 st.set_page_config(page_title="Medical Record Analyzer", layout="wide")
 

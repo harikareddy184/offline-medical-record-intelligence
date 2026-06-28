@@ -1,1 +1,5 @@
-flask
+streamlit
+pytesseract
+Pillow
+opencv-python
+numpy
