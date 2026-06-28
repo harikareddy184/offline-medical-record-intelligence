@@ -3,15 +3,14 @@ workflow:
     - when: always
 
 stages:
-  - setup
   - test
   - lint
 
 setup:
-  stage: setup
+  stage: test
   image: python:3.10
   script:
-    - echo "Installing dependencies"
+    - python --version
     - pip install -r requirements.txt
 
 compile_check:
@@ -26,7 +25,7 @@ import_check:
   script:
     - python -c "import backend.app; print('IMPORT OK')"
 
-lint:
+lint_check:
   stage: lint
   image: python:3.10
   script:
