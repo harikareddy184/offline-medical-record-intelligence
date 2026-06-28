@@ -2,13 +2,14 @@ workflow:
   rules:
     - when: always
 
+variables:
+  PRE_COMMIT_HOME: "$CI_PROJECT_DIR/.cache/pre-commit"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+
 default:
-  image: python:3.12
-  variables:
-    PRE_COMMIT_HOME: "$CI_PROJECT_DIR/.cache/pre-commit"
   before_script:
     - python --version
-    - python -m pip install --upgrade pip
+    - python -m pip install --upgrade pip setuptools wheel
     - python -m pip install -r requirements.txt
     - python -m pip install black ruff mypy pytest bandit pip-audit pre-commit
 
