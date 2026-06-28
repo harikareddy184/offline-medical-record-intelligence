@@ -1,8 +1,17 @@
 stages:
-  - validate
+  - metadata
+  - build
+  - format
+  - lint
+  - typecheck
+  - test
+  - security
+  - dependencies
+  - hooks
+  - package
+  - docs
 
-cpu_first_audit:
-  stage: validate
+.python_audit:
   image: python:3.12-slim
   before_script:
     - apt-get update
@@ -10,14 +19,75 @@ cpu_first_audit:
     - python -m pip install --upgrade pip
     - python -m pip install -r requirements.txt
     - python -m pip install black ruff mypy pytest bandit pip-audit pre-commit
+
+metadata_check:
+  extends: .python_audit
+  stage: metadata
   script:
     - python scripts/check_metadata.py
+
+compile_backend:
+  extends: .python_audit
+  stage: build
+  script:
     - python -m compileall backend
+
+ruff_format_check:
+  extends: .python_audit
+  stage: format
+  script:
     - ruff format --check .
-    - ruff check .
+
+black_format_check:
+  extends: .python_audit
+  stage: format
+  script:
     - black --check .
+
+ruff_lint:
+  extends: .python_audit
+  stage: lint
+  script:
+    - ruff check .
+
+mypy_type_check:
+  extends: .python_audit
+  stage: typecheck
+  script:
     - mypy backend scripts --ignore-missing-imports
+
+pytest_unit_tests:
+  extends: .python_audit
+  stage: test
+  script:
     - pytest -q
+
+bandit_security_scan:
+  extends: .python_audit
+  stage: security
+  script:
     - bandit -r backend scripts -ll
+
+pip_audit_dependencies:
+  extends: .python_audit
+  stage: dependencies
+  script:
     - pip-audit --no-deps --disable-pip --timeout 10 -r requirements.txt
+
+pre_commit_all_files:
+  extends: .python_audit
+  stage: hooks
+  script:
     - pre-commit run --all-files
+
+streamlit_import_check:
+  extends: .python_audit
+  stage: package
+  script:
+    - python -c "from backend.app import build_result; print(build_result('Patient has fever')['status'])"
+
+docs_quality_check:
+  extends: .python_audit
+  stage: docs
+  script:
+    - python -c "from pathlib import Path; required=['README.md','CONTRIBUTING.md','CHANGELOG.md','ISSUES.md']; [print(f'{p}: {Path(p).stat().st_size} bytes') for p in required]"

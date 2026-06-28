@@ -26,3 +26,13 @@ repos:
         entry: python -m pytest -q
         language: system
         pass_filenames: false
+      - id: compile-backend
+        name: compile-backend
+        entry: python -m compileall backend
+        language: system
+        pass_filenames: false
+      - id: bandit-security
+        name: bandit-security
+        entry: python -m bandit -r backend scripts -ll
+        language: system
+        pass_filenames: false

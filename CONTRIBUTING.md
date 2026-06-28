@@ -25,14 +25,18 @@ Run these before submitting changes:
 python scripts/check_metadata.py
 python -m compileall backend
 ruff format --check .
-ruff check .
 black --check .
+ruff check .
 mypy backend scripts --ignore-missing-imports
 pytest -q
 bandit -r backend scripts -ll
-pip-audit -r requirements.txt
+pip-audit --no-deps --disable-pip --timeout 10 -r requirements.txt
 pre-commit run --all-files
 ```
+
+The GitLab pipeline exposes these as separate jobs so every formatting, lint,
+type-check, test, security, dependency, hook, package, and docs check is visible
+on the runner.
 
 ## Commit Style
 
