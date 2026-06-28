@@ -2,37 +2,55 @@ repos:
   - repo: local
     hooks:
       - id: metadata-check
-        name: metadata-check
+        name: metadata check
         entry: python scripts/check_metadata.py
         language: system
         pass_filenames: false
-      - id: ruff-format-check
-        name: ruff-format-check
-        entry: python -m ruff format --check .
+
+      - id: docs-check
+        name: docs checklist check
+        entry: python scripts/check_docs.py
         language: system
         pass_filenames: false
+
+      - id: compile-check
+        name: python compile check
+        entry: python -m compileall app.py backend scripts tests
+        language: system
+        pass_filenames: false
+
+      - id: ruff-format
+        name: ruff format check
+        entry: ruff format --check .
+        language: system
+        pass_filenames: false
+
+      - id: black-format
+        name: black format check
+        entry: black --check .
+        language: system
+        pass_filenames: false
+
       - id: ruff-lint
-        name: ruff-lint
-        entry: python -m ruff check .
+        name: ruff lint check
+        entry: ruff check .
         language: system
         pass_filenames: false
-      - id: black-check
-        name: black-check
-        entry: python -m black --check .
+
+      - id: mypy
+        name: mypy type check
+        entry: mypy backend scripts --ignore-missing-imports
         language: system
         pass_filenames: false
+
       - id: pytest
         name: pytest
-        entry: python -m pytest -q
+        entry: pytest -q
         language: system
         pass_filenames: false
-      - id: compile-backend
-        name: compile-backend
-        entry: python -m compileall backend
-        language: system
-        pass_filenames: false
-      - id: bandit-security
-        name: bandit-security
-        entry: python -m bandit -r backend scripts -ll
+
+      - id: bandit
+        name: bandit security check
+        entry: bandit -r backend scripts -ll
         language: system
         pass_filenames: false

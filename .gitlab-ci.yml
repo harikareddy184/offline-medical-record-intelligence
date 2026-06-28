@@ -2,32 +2,87 @@ workflow:
   rules:
     - when: always
 
-stages:
-  - test
-  - lint
-
-setup:
-  stage: test
-  image: python:3.10
-  script:
+default:
+  image: python:3.12
+  variables:
+    PRE_COMMIT_HOME: "$CI_PROJECT_DIR/.cache/pre-commit"
+  before_script:
     - python --version
-    - pip install -r requirements.txt
+    - python -m pip install --upgrade pip
+    - python -m pip install -r requirements.txt
+    - python -m pip install black ruff mypy pytest bandit pip-audit pre-commit
+
+stages:
+  - metadata
+  - build
+  - format
+  - lint
+  - test
+  - security
+  - docs
+
+metadata_check:
+  stage: metadata
+  script:
+    - python scripts/check_metadata.py
 
 compile_check:
-  stage: test
-  image: python:3.10
+  stage: build
   script:
-    - python -m compileall backend
+    - python -m compileall app.py backend scripts tests
 
-import_check:
-  stage: test
-  image: python:3.10
+package_import_check:
+  stage: build
   script:
-    - python -c "import backend.app; print('IMPORT OK')"
+    - python -c "from backend.app import build_result; result = build_result('Patient has fever'); assert result['status'] == 'success'; assert result['meta']['runtime'] == 'CPU'"
 
-lint_check:
+streamlit_entrypoint_check:
+  stage: build
+  script:
+    - streamlit version
+    - python -c "import app; import backend.app; assert callable(app.main)"
+
+ruff_format_check:
+  stage: format
+  script:
+    - ruff format --check .
+
+black_format_check:
+  stage: format
+  script:
+    - black --check .
+
+ruff_lint_check:
   stage: lint
-  image: python:3.10
   script:
-    - pip install flake8
-    - flake8 backend || true
+    - ruff check .
+
+mypy_type_check:
+  stage: lint
+  script:
+    - mypy backend scripts --ignore-missing-imports
+
+pytest_check:
+  stage: test
+  script:
+    - pytest -q
+
+bandit_security_check:
+  stage: security
+  script:
+    - bandit -r backend scripts -ll
+
+pip_audit_dependency_check:
+  stage: security
+  script:
+    - pip-audit --no-deps --disable-pip --timeout 10 -r requirements.txt
+
+precommit_check:
+  stage: security
+  script:
+    - pre-commit run --all-files
+
+docs_check:
+  stage: docs
+  script:
+    - python scripts/check_docs.py

@@ -2,6 +2,9 @@
 
 ## 2026-06-28
 
+- Replaced the lightweight GitLab CI file with 13 real audit jobs and no
+  disabled/stubbed checks.
+- Added local pre-commit hooks and documentation checklist validation.
 - Expanded GitLab CI into separate metadata, build, format, lint, type-check,
   test, security, dependency, hook, package, and docs stages.
 - Added clearer patient summaries, condition explanations, care guidance,

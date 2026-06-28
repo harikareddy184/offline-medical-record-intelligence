@@ -143,7 +143,8 @@ Run the same audit locally:
 
 ```bash
 python scripts/check_metadata.py
-python -m compileall backend
+python scripts/check_docs.py
+python -m compileall app.py backend scripts tests
 ruff format --check .
 black --check .
 ruff check .

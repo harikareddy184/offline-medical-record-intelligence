@@ -14,7 +14,7 @@ python -m pip install black ruff mypy pytest bandit pip-audit pre-commit
 4. Run the app:
 
 ```bash
-streamlit run backend/app.py
+streamlit run app.py
 ```
 
 ## Quality Checks
@@ -23,7 +23,8 @@ Run these before submitting changes:
 
 ```bash
 python scripts/check_metadata.py
-python -m compileall backend
+python scripts/check_docs.py
+python -m compileall app.py backend scripts tests
 ruff format --check .
 black --check .
 ruff check .
