@@ -1,21 +1,17 @@
-def run_inference(processed):
-    text = processed.get("input", "").lower()
+def run_inference(data):
+    text = data["clean_text"]
 
-    if "fever" in text and "cough" in text:
-        return {
-            "condition": "Flu",
-            "confidence": 0.92,
-            "severity": "mild",
-            "advice": [
-                "Take rest",
-                "Drink fluids",
-                "Monitor temperature"
-            ]
-        }
+    # Simple offline logic
+    word_count = len(text.split())
+
+    if "fever" in text:
+        condition = "Possible Fever"
+    elif "cough" in text:
+        condition = "Possible Cold"
+    else:
+        condition = "General Checkup"
 
     return {
-        "condition": "Unknown",
-        "confidence": 0.50,
-        "severity": "low",
-        "advice": ["Consult doctor"]
+        "word_count": word_count,
+        "predicted_condition": condition
     }

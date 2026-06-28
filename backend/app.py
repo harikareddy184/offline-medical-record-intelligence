@@ -1,135 +1,115 @@
 import streamlit as st
-from input_processor import process_input
-from inference import run_inference
-from output_formatter import format_output
+import pytesseract
+from PIL import Image
+import json
+import re
+import pytesseract
 
-# ---------------- PAGE CONFIG ----------------
-st.set_page_config(page_title="Medical Analyzer", layout="wide")
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
-# ---------------- REMOVE DEFAULT WHITE SPACE ----------------
-st.markdown("""
-<style>
-/* REMOVE WHITE TOP SPACE */
-.block-container {
-    padding-top: 1rem;
-    padding-bottom: 0rem;
-}
+# ---------------- CONFIG ----------------
+st.set_page_config(page_title="Medical Record Analyzer", layout="wide")
 
-/* FULL DARK BACKGROUND */
-html, body, [class*="css"] {
-    background-color: #0b1220 !important;
-    color: white;
-}
+# ---------------- OCR FUNCTION ----------------
+def extract_text_from_image(uploaded_file):
+    image = Image.open(uploaded_file)
+    text = pytesseract.image_to_string(image)
+    return text
 
-/* MAIN CARD */
-.main-card {
-    background: #111827;
-    padding: 30px;
-    border-radius: 20px;
-}
+# ---------------- SIMPLE PARSER ----------------
+def parse_medical_text(text):
+    text_lower = text.lower()
 
-/* TITLE */
-.title {
-    font-size: 36px;
-    font-weight: 700;
-    color: #ffffff;
-}
+    # Extract simple entities
+    keywords = ["fever", "cough", "pain", "cold", "headache"]
+    found = [word for word in keywords if word in text_lower]
 
-/* SUBTITLE */
-.subtitle {
-    color: #94a3b8;
-    font-size: 14px;
-    margin-bottom: 20px;
-}
+    # Try extracting name (very basic)
+    name_match = re.search(r"prescribed to[:\-]?\s*(.*)", text, re.IGNORECASE)
+    patient_name = name_match.group(1).strip() if name_match else "Unknown"
 
-/* INNER CARD */
-.card {
-    background: #0f172a;
-    padding: 20px;
-    border-radius: 15px;
-    border: 1px solid #1e293b;
-}
+    # Try extracting doctor
+    doctor_match = re.search(r"provider[:\-]?\s*(.*)", text, re.IGNORECASE)
+    doctor = doctor_match.group(1).strip() if doctor_match else "Unknown"
 
-/* TEXT AREA */
-textarea {
-    background-color: #020617 !important;
-    color: white !important;
-    border-radius: 10px !important;
-}
+    # Try extracting date
+    date_match = re.search(r"\d{1,2}/\d{1,2}/\d{2,4}", text)
+    date = date_match.group(0) if date_match else "Unknown"
 
-/* BUTTON */
-.stButton>button {
-    background: linear-gradient(90deg, #2563eb, #22c55e);
-    color: white;
-    border-radius: 10px;
-    height: 50px;
-    width: 100%;
-    border: none;
-}
+    return {
+        "patient_name": patient_name,
+        "doctor": doctor,
+        "date": date,
+        "entities": found
+    }
 
-/* TABS FIX */
-.stTabs [data-baseweb="tab"] {
-    color: #94a3b8;
-}
-.stTabs [aria-selected="true"] {
-    color: white;
-    border-bottom: 2px solid #3b82f6;
-}
-</style>
-""", unsafe_allow_html=True)
+# ---------------- UI ----------------
+st.title("📋 Medical Record Analyzer")
+st.write("Extract structured insights from medical records (offline)")
 
-# ---------------- MAIN UI ----------------
-st.markdown('<div class="main-card">', unsafe_allow_html=True)
+tab1, tab2 = st.tabs(["📝 Text Input", "📁 Image Upload"])
 
-# Header
-st.markdown('<div class="title">📋 Medical Record <span style="color:#3b82f6">Analyzer</span></div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Extract key insights from medical records using AI</div>', unsafe_allow_html=True)
+text_data = ""
+uploaded_file = None
 
-# Layout
-col1, col2 = st.columns([2,1])
+# -------- TEXT TAB --------
+with tab1:
+    text_data = st.text_area("Enter medical text", height=200)
 
-# ---------------- LEFT ----------------
-with col1:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+# -------- IMAGE TAB --------
+with tab2:
+    uploaded_file = st.file_uploader("Upload image", type=["png", "jpg", "jpeg"])
 
-    tab1, tab2 = st.tabs(["📝 Text Input", "📁 File Upload"])
+# -------- BUTTON --------
+if st.button("✨ Analyze Record"):
 
-    with tab1:
-        text = st.text_area("Enter medical text", height=180, placeholder="Paste your medical record...")
+    input_text = ""
 
-    with tab2:
-        uploaded_file = st.file_uploader("Upload file", type=["pdf","txt","docx"])
+    # IMAGE → OCR
+    if uploaded_file:
+        input_text = extract_text_from_image(uploaded_file)
 
-    st.write("")
-    analyze = st.button("✨ Analyze Record")
+    # TEXT INPUT
+    elif text_data:
+        input_text = text_data
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ---------------- RIGHT ----------------
-with col2:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-
-    st.markdown("### 💡 What you'll get")
-    st.write("✔ Extracted Key Information")
-    st.write("✔ Structured Summary")
-    st.write("✔ Easy Insights")
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-st.markdown('</div>', unsafe_allow_html=True)
-
-# ---------------- PROCESS ----------------
-if analyze:
-    if text.strip() == "":
-        st.warning("Please enter medical text")
     else:
-        try:
-            processed = process_input({"input": text})
-            result = run_inference(processed)
-            output = format_output(processed, result)
+        st.warning("Please enter text or upload image")
+        st.stop()
 
-            st.success("✅ Analysis Complete")
-            st.json(output)
+    # -------- PARSE --------
+    parsed = parse_medical_text(input_text)
 
-        except Exception as e:
-            st.error(str(e))
+    # -------- FINAL JSON --------
+    result = {
+        "status": "success",
+        "data": {
+            "input_text": input_text.strip(),
+            "patient_name": parsed["patient_name"],
+            "doctor": parsed["doctor"],
+            "date": parsed["date"],
+            "extracted_entities": parsed["entities"],
+            "medical_analysis": {
+                "possible_condition": "Unknown" if not parsed["entities"] else "General Illness",
+                "confidence_score": 0.5
+            },
+            "recommendation": {
+                "severity_level": "low",
+                "advice": ["Consult doctor"]
+            }
+        },
+        "meta": {
+            "model": "OCR-Rule-Based-v1",
+            "offline_mode": True
+        }
+    }
+
+    # -------- OUTPUT --------
+    st.success("✅ Analysis Complete!")
+    st.markdown("### 📊 Result")
+
+    st.json(result)
+
+    # -------- SHOW IMAGE --------
+    if uploaded_file:
+        st.image(uploaded_file, caption="Uploaded Image", use_container_width=True)
