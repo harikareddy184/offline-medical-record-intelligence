@@ -20,6 +20,7 @@ no_implicit_optional = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 
 [tool.bandit]
 exclude_dirs = ["tests"]

@@ -41,8 +41,10 @@ Install Python dependencies and start the app:
 
 ```bash
 python -m pip install -r requirements.txt
-streamlit run backend/app.py
+streamlit run app.py
 ```
+
+The older command, `streamlit run backend/app.py`, also works.
 
 ## Streamlit Cloud Deployment
 
