@@ -12,3 +12,6 @@ dist/
 build/
 *.egg-info/
 .streamlit/secrets.toml
+gitlab-runner.exe
+config.toml
+.runner_system_id
