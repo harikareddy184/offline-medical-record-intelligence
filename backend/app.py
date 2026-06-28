@@ -1,5 +1,6 @@
 import re
 import shutil
+from pathlib import Path
 
 import pytesseract
 import streamlit as st
@@ -8,7 +9,17 @@ from PIL import Image
 
 def configure_tesseract():
     """Use the system Tesseract binary when it is available on PATH."""
+    common_paths = [
+        "/usr/bin/tesseract",
+        "/usr/local/bin/tesseract",
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+    ]
     tesseract_path = shutil.which("tesseract")
+    if not tesseract_path:
+        tesseract_path = next(
+            (path for path in common_paths if Path(path).exists()),
+            None,
+        )
     if tesseract_path:
         pytesseract.pytesseract.tesseract_cmd = tesseract_path
 
@@ -93,7 +104,8 @@ def main():
             except pytesseract.TesseractNotFoundError:
                 st.error(
                     "Tesseract OCR is not installed or is not available on PATH. "
-                    "On Streamlit Cloud, keep 'tesseract-ocr' in apt.txt and redeploy."
+                    "On Streamlit Cloud, keep 'tesseract-ocr' in packages.txt "
+                    "and redeploy."
                 )
                 st.stop()
             except Exception as exc:

@@ -44,7 +44,7 @@ streamlit run backend/app.py
 
 ## Streamlit Cloud Deployment
 
-The repository includes `apt.txt` with `tesseract-ocr`, so Streamlit Cloud
+The repository includes `packages.txt` with `tesseract-ocr`, so Streamlit Cloud
 installs the OCR binary during deployment. The app detects the binary from
 `PATH`, which works on Linux cloud hosts and local machines.
 
