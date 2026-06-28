@@ -1,17 +1,18 @@
 # Work Division
 
-## Backend – Sama Harika Reddy
-- Backend setup
-- Input processing
-- CPU model integration
-- Inference pipeline
-- JSON output formatting
-- Backend testing
+## Backend and OCR - Sama Harika Reddy
 
-## Frontend – Teammate Name
-- Frontend setup
-- UI design
-- File upload interface
+- Streamlit app setup
+- Tesseract OCR integration
+- CPU-only inference pipeline
+- Rule-based medical entity extraction
+- Structured JSON output formatting
+- Backend tests and audit checks
+
+## Frontend and Demo - Sama Harika Reddy
+
+- Text input workflow
+- Image upload workflow
 - Result display page
-- Frontend testing
-- Backend integration
+- Public Streamlit deployment
+- Offline demo preparation

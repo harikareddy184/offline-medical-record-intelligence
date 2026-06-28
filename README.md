@@ -1,68 +1,87 @@
-MedicalExtract AI
+# MedicalExtract AI
 
-Project Overview
+MedicalExtract AI is a CPU-first, offline Streamlit app that extracts structured
+data from medical record text and prescription images.
 
-MedicalExtract AI is an offline, CPU-first AI application that extracts structured information from medical documents such as prescriptions, lab reports, and discharge summaries. The application uses OCR and local AI models to convert unstructured medical records into structured JSON, which is stored in a local SQLite database.
+## Problem
 
-Problem Statement
+Medical records are often stored as paper documents or scanned images. They are
+hard to search and risky to send to cloud services. This project processes the
+record locally and returns clean JSON that can be saved or copied into another
+system.
 
-Medical records are often stored as paper documents or scanned PDFs, making them difficult to search, organize, and manage. This project provides a privacy-friendly solution by processing documents completely offline without sending any data to cloud services.
+## Features
 
-Objectives
+- Upload PNG, JPG, or JPEG medical record images
+- Extract text with Tesseract OCR
+- Enter medical text directly
+- Parse patient name, provider, date, and common symptoms
+- Return structured JSON
+- Run on CPU with no GPU or CUDA
+- Work offline after dependencies are installed
 
-* Extract information from medical documents.
-* Convert unstructured text into structured JSON.
-* Store extracted information locally in SQLite.
-* Work completely offline.
-* Run AI inference using only CPU.
+## Model and Runtime
 
-Features
+- OCR model/runtime: Tesseract OCR
+- Structured extraction: local rule-based Python parser
+- Hardware target: CPU
+- Cloud calls: none for the core workflow
 
-* Upload medical documents (Image/PDF)
-* OCR text extraction using Tesseract
-* Local AI processing using Ollama
-* Structured JSON generation
-* SQLite database storage
-* Search and retrieve saved medical records
-* 100% Offline
-* CPU-First AI
+## Run Locally
 
-Technology Stack
+Install Tesseract OCR first. On Debian or Ubuntu:
 
-* Python
-* FastAPI
-* Streamlit
-* Tesseract OCR
-* Ollama
-* SQLite
+```bash
+sudo apt-get install tesseract-ocr
+```
 
-Workflow
+Install Python dependencies and start the app:
 
-1. Upload Medical Document
-2. Extract Text using OCR
-3. Process Text using Local AI
-4. Generate Structured JSON
-5. Store Data in SQLite
-6. Search and Retrieve Records
+```bash
+python -m pip install -r requirements.txt
+streamlit run backend/app.py
+```
 
-Expected JSON Output
+## Streamlit Cloud Deployment
 
+The repository includes `apt.txt` with `tesseract-ocr`, so Streamlit Cloud
+installs the OCR binary during deployment. The app detects the binary from
+`PATH`, which works on Linux cloud hosts and local machines.
+
+## Expected JSON Output
+
+```json
 {
-  "patient_name": "",
-  "doctor_name": "",
-  "date": "",
-  "medicines": [],
-  "diagnosis": ""
+  "status": "success",
+  "data": {
+    "input_text": "Prescribed to: Asha Rao",
+    "patient_name": "Asha Rao",
+    "doctor": "Unknown",
+    "date": "Unknown",
+    "extracted_entities": ["fever"],
+    "medical_analysis": {
+      "possible_condition": "General Illness",
+      "confidence_score": 0.5
+    },
+    "recommendation": {
+      "severity_level": "low",
+      "advice": ["Consult doctor"]
+    }
+  },
+  "meta": {
+    "model": "Tesseract OCR + Rule-Based Parser",
+    "offline_mode": true,
+    "runtime": "CPU"
+  }
 }
+```
 
-Future Enhancements
+## Audit Checks
 
-* Support laboratory reports
-* Support medical bills
-* Support discharge summaries
-* Export data to CSV and JSON
-* Multi-language support
+GitLab CI runs real checks for metadata, compilation, formatting, linting,
+typing, tests, security scanning, dependency auditing, and pre-commit hooks.
 
-License
+## License
 
-This project will be released under the GNU General Public License v3.0 (GPL-3.0).
+This project is licensed under GPL-3.0-or-later, a strong copyleft Free and Open
+Source Software license.

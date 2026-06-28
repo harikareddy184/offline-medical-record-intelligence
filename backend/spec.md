@@ -1,65 +1,45 @@
-🧠 Project Idea
+# Spec Kit
 
-This project is a CPU-first, offline AI system that converts unstructured inputs like text, images, audio, and video into structured JSON data. It is designed to run completely on local machines without cloud or GPU dependency.
+## Project Idea
 
-⸻
+MedicalExtract AI is a CPU-first, offline web app that converts unstructured
+medical record text and scanned prescription images into structured JSON.
 
-🎯 Problem Statement
+## Problem
 
-Most AI systems depend on GPUs and cloud APIs, making them expensive and unusable offline. This project solves that by enabling AI inference on CPU with full offline capability.
+Paper prescriptions and scanned medical records are hard to search, organize,
+and reuse. Cloud OCR or remote AI APIs can expose private health data and fail
+when the network is unavailable.
 
-⸻
+## Inputs
 
-📥 Inputs
+- Typed medical text
+- PNG, JPG, or JPEG medical record images
 
-* Text documents
-* Images
-* Audio files
-* Video files (optional)
+## Output
 
-⸻
+The app returns structured JSON containing:
 
-📤 Output
+- Raw extracted text
+- Patient name
+- Doctor or provider
+- Date
+- Extracted symptoms or entities
+- Basic medical analysis
+- Recommendation metadata
 
-Structured JSON data such as:
+## CPU Runtime
 
-* Extracted entities
-* Summary
-* Key information
-* Tags or labels
+- OCR engine: Tesseract OCR
+- Parser: local rule-based Python parser
+- Runtime: CPU only
+- GPU/CUDA: not required
 
-⸻
+## Offline Mode
 
-⚙️ CPU Model
+Core processing runs locally with no external API calls. After dependencies are
+installed, the app can process text and images with Wi-Fi turned off.
 
-We will use one of the following CPU-based models:
+## System Flow
 
-* Ollama (CPU mode)
-    OR
-* ONNX Runtime (CPU inference)
-    OR
-* whisper.cpp (for audio processing)
-
-⸻
-
-🔌 Offline Mode
-
-* No internet connection required
-* No external API calls
-* All processing happens locally on CPU
-* Fully functional in offline environment
-
-⸻
-
-🧰 Tech Stack
-
-* Python (backend)
-* CLI / Web interface (frontend)
-* CPU-based model runtime (Ollama / ONNX / whisper.cpp)
-* JSON for structured output
-
-⸻
-
-🏗️ System Flow
-
-Input → Preprocessing → CPU Model Inference → Postprocessing → JSON Output
+Input -> OCR or text capture -> local parser -> structured JSON -> display

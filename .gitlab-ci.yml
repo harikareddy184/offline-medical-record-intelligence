@@ -1,0 +1,23 @@
+stages:
+  - validate
+
+cpu_first_audit:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - apt-get update
+    - apt-get install -y --no-install-recommends tesseract-ocr
+    - python -m pip install --upgrade pip
+    - python -m pip install -r requirements.txt
+    - python -m pip install black ruff mypy pytest bandit pip-audit pre-commit
+  script:
+    - python scripts/check_metadata.py
+    - python -m compileall backend
+    - ruff format --check .
+    - ruff check .
+    - black --check .
+    - mypy backend scripts --ignore-missing-imports
+    - pytest -q
+    - bandit -r backend scripts -ll
+    - pip-audit --no-deps --disable-pip --timeout 10 -r requirements.txt
+    - pre-commit run --all-files

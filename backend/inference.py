@@ -11,7 +11,4 @@ def run_inference(data):
     else:
         condition = "General Checkup"
 
-    return {
-        "word_count": word_count,
-        "predicted_condition": condition
-    }
+    return {"word_count": word_count, "predicted_condition": condition}
