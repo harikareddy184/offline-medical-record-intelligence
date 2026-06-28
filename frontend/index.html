@@ -1,22 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Medical AI</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Medical Record Intelligence</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
+
 <body>
+  <div class="container">
 
-<h1>Medical Record Analyzer</h1>
+    <header class="header">
+      <h1>🩺 Offline Medical Record Intelligence</h1>
+      <p>Fast • Secure • Smart Insights</p>
+    </header>
 
-<textarea id="inputText" placeholder="Enter medical text"></textarea>
+    <div class="card">
+      <h2>Enter Patient Data</h2>
 
-<input type="file" id="fileInput">
+      <textarea id="inputText" placeholder="Paste medical report here..."></textarea>
 
-<button onclick="analyze()">Analyze</button>
+      <button onclick="processData()">Analyze Report</button>
+    </div>
 
-<pre id="result"></pre>
+    <div class="card result">
+      <h2>AI Output</h2>
+      <pre id="output">Your results will appear here...</pre>
+    </div>
 
-<script src="app.js"></script>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
 
