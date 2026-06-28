@@ -13,6 +13,12 @@ repos:
         language: system
         pass_filenames: false
 
+      - id: hackathon-rules-check
+        name: hackathon rules check
+        entry: python scripts/check_hackathon_rules.py
+        language: system
+        pass_filenames: false
+
       - id: compile-check
         name: python compile check
         entry: python -m compileall app.py backend scripts tests

@@ -29,6 +29,8 @@ def main():
         "CHANGELOG.md",
         "work_division.md",
         "backend/spec.md",
+        "scripts/check_docs.py",
+        "scripts/check_hackathon_rules.py",
         "apt.txt",
         "packages.txt",
         ".pre-commit-config.yaml",

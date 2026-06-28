@@ -19,6 +19,7 @@ stages:
   - format
   - lint
   - test
+  - compliance
   - security
   - docs
 
@@ -67,6 +68,31 @@ pytest_check:
   stage: test
   script:
     - pytest -q
+
+cpu_first_check:
+  stage: compliance
+  script:
+    - python -c "from scripts.check_hackathon_rules import check_cpu_first; check_cpu_first(); print('cpu_first: passed')"
+
+offline_first_check:
+  stage: compliance
+  script:
+    - python -c "from scripts.check_hackathon_rules import check_offline_first; check_offline_first(); print('offline_first: passed')"
+
+strong_copyleft_license_check:
+  stage: compliance
+  script:
+    - python -c "from scripts.check_hackathon_rules import check_strong_copyleft_license; check_strong_copyleft_license(); print('strong_copyleft_license: passed')"
+
+system_package_check:
+  stage: compliance
+  script:
+    - python -c "from scripts.check_hackathon_rules import check_system_packages; check_system_packages(); print('system_packages: passed')"
+
+real_parser_output_check:
+  stage: compliance
+  script:
+    - python -c "from scripts.check_hackathon_rules import check_real_parser_output; check_real_parser_output(); print('real_parser_output: passed')"
 
 bandit_security_check:
   stage: security

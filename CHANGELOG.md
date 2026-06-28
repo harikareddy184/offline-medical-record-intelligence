@@ -2,6 +2,8 @@
 
 ## 2026-06-28
 
+- Added separate GitLab compliance jobs for CPU-first, offline-first, GPL,
+  Tesseract system package, and real parser output checks.
 - Replaced the lightweight GitLab CI file with 13 real audit jobs and no
   disabled/stubbed checks.
 - Added local pre-commit hooks and documentation checklist validation.
