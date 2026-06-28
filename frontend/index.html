@@ -1,36 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Medical Record Analyzer</title>
+    <title>Medical AI</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h2>Medical Record Analyzer</h2>
+<h1>Medical Record Analyzer</h1>
 
-<textarea id="inputText" rows="5" cols="40" placeholder="Enter patient text"></textarea><br><br>
+<textarea id="inputText" placeholder="Enter medical text"></textarea>
 
-<button onclick="sendData()">Analyze</button>
+<input type="file" id="fileInput">
 
-<h3>Result:</h3>
+<button onclick="analyze()">Analyze</button>
+
 <pre id="result"></pre>
 
-<script>
-async function sendData() {
-    let text = document.getElementById("inputText").value;
-
-    let response = await fetch("http://127.0.0.1:5000/process", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ text: text })
-    });
-
-    let data = await response.json();
-    document.getElementById("result").innerText = JSON.stringify(data, null, 2);
-}
-</script>
-
+<script src="app.js"></script>
 </body>
 </html>
 

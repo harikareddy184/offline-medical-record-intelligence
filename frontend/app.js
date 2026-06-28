@@ -1,23 +1,23 @@
-function uploadFile(){
+async function analyze() {
 
-    const file=document.getElementById("fileInput").files[0];
+    let text = document.getElementById("inputText").value;
 
-    if(!file){
+    const file = document.getElementById("fileInput").files[0];
 
-        alert("Please choose a file");
-
-        return;
-
+    if (file) {
+        text = await file.text();
     }
 
-    document.getElementById("output").innerHTML=`
+    const response = await fetch("http://127.0.0.1:5000/process", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text: text })
+    });
 
-    <h3>Record Processed</h3>
+    const data = await response.json();
 
-    <p><b>File Name:</b> ${file.name}</p>
-
-    <p><b>Status:</b> Ready for Backend Processing</p>
-
-    `;
-
+    document.getElementById("result").innerHTML =
+        JSON.stringify(data, null, 2);
 }
