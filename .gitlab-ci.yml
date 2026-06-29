@@ -2,8 +2,6 @@ workflow:
   rules:
     - when: always
 
-image: python:3.12-slim
-
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   PRE_COMMIT_HOME: "$CI_PROJECT_DIR/.cache/pre-commit"
@@ -18,6 +16,8 @@ cache:
 
 default:
   before_script:
+    - Write-Host "Running on GitLab runner $env:CI_RUNNER_DESCRIPTION"
+    - Write-Host "Runner tags $env:CI_RUNNER_TAGS"
     - python --version
     - python -m pip install --upgrade pip setuptools wheel
     - python -m pip install -r requirements.txt
@@ -25,6 +25,7 @@ default:
   interruptible: true
 
 stages:
+  - runner
   - metadata
   - build
   - format
@@ -33,6 +34,21 @@ stages:
   - compliance
   - security
   - docs
+
+
+# ---------------- RUNNER ----------------
+runner_identity:
+  stage: runner
+  before_script: []
+  script:
+    - Write-Host "Project $env:CI_PROJECT_PATH"
+    - Write-Host "Pipeline $env:CI_PIPELINE_ID"
+    - Write-Host "Runner ID $env:CI_RUNNER_ID"
+    - Write-Host "Runner description $env:CI_RUNNER_DESCRIPTION"
+    - Write-Host "Runner tags $env:CI_RUNNER_TAGS"
+    - Write-Host "Runner executable architecture $env:CI_RUNNER_EXECUTABLE_ARCH"
+    - Write-Host "PowerShell $($PSVersionTable.PSVersion)"
+    - python --version
 
 
 # ---------------- METADATA ----------------
