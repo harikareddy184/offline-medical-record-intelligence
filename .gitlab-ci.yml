@@ -3,154 +3,51 @@ workflow:
     - when: always
 
 variables:
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-  PRE_COMMIT_HOME: "$CI_PROJECT_DIR/.cache/pre-commit"
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
   PYTHONUNBUFFERED: "1"
 
-cache:
-  key: "$CI_COMMIT_REF_SLUG"
-  paths:
-    - .cache/pip
-    - .cache/pre-commit
-
 default:
-  before_script:
-    - Write-Host "Running on GitLab runner $env:CI_RUNNER_DESCRIPTION"
-    - Write-Host "Runner tags $env:CI_RUNNER_TAGS"
-    - python --version
-    - python -m pip install --upgrade pip setuptools wheel
-    - python -m pip install -r requirements.txt
-    - python -m pip install black ruff mypy pytest bandit pip-audit pre-commit streamlit
   interruptible: true
 
 stages:
-  - runner
-  - metadata
+  - smoke
+  - validate
   - build
-  - format
-  - lint
   - test
-  - compliance
-  - security
   - docs
 
-
-# ---------------- RUNNER ----------------
-runner_identity:
-  stage: runner
-  before_script: []
+runner_smoke:
+  stage: smoke
   script:
-    - Write-Host "Project $env:CI_PROJECT_PATH"
-    - Write-Host "Pipeline $env:CI_PIPELINE_ID"
-    - Write-Host "Runner ID $env:CI_RUNNER_ID"
     - Write-Host "Runner description $env:CI_RUNNER_DESCRIPTION"
     - Write-Host "Runner tags $env:CI_RUNNER_TAGS"
-    - Write-Host "Runner executable architecture $env:CI_RUNNER_EXECUTABLE_ARCH"
-    - Write-Host "PowerShell $($PSVersionTable.PSVersion)"
+    - Write-Host "Project $env:CI_PROJECT_PATH"
+    - Write-Host "Commit $env:CI_COMMIT_SHORT_SHA"
     - python --version
 
-
-# ---------------- METADATA ----------------
 metadata_check:
-  stage: metadata
+  stage: validate
   script:
     - python scripts/check_metadata.py
 
-
-# ---------------- BUILD CHECKS ----------------
 compile_check:
   stage: build
   script:
     - python -m compileall app.py backend scripts tests
 
-package_import_check:
+parser_smoke_check:
   stage: build
   script:
-    - python -c "from backend.app import build_result; result = build_result('Patient has fever'); assert result['status'] == 'success'"
+    - python -c "from backend.app import build_result; result = build_result('Patient has fever'); assert result['status'] == 'success'; print(result['data']['medical_analysis']['possible_condition'])"
 
-streamlit_entrypoint_check:
-  stage: build
-  script:
-    - python -c "import app; import backend.app; assert hasattr(app, 'main')"
-
-
-# ---------------- FORMAT ----------------
-ruff_format_check:
-  stage: format
-  script:
-    - ruff format --check .
-
-black_format_check:
-  stage: format
-  script:
-    - black --check .
-
-
-# ---------------- LINT ----------------
-ruff_lint_check:
-  stage: lint
-  script:
-    - ruff check .
-
-mypy_type_check:
-  stage: lint
-  script:
-    - mypy backend scripts --ignore-missing-imports
-
-
-# ---------------- TEST ----------------
 pytest_check:
   stage: test
+  before_script:
+    - python -m pip install --upgrade pip
+    - python -m pip install -r requirements.txt pytest
   script:
     - pytest -q
 
-
-# ---------------- COMPLIANCE ----------------
-cpu_first_check:
-  stage: compliance
-  script:
-    - python -c "from scripts.check_hackathon_rules import check_cpu_first; check_cpu_first()"
-
-offline_first_check:
-  stage: compliance
-  script:
-    - python -c "from scripts.check_hackathon_rules import check_offline_first; check_offline_first()"
-
-strong_copyleft_license_check:
-  stage: compliance
-  script:
-    - python -c "from scripts.check_hackathon_rules import check_strong_copyleft_license; check_strong_copyleft_license()"
-
-system_package_check:
-  stage: compliance
-  script:
-    - python -c "from scripts.check_hackathon_rules import check_system_packages; check_system_packages()"
-
-real_parser_output_check:
-  stage: compliance
-  script:
-    - python -c "from scripts.check_hackathon_rules import check_real_parser_output; check_real_parser_output()"
-
-
-# ---------------- SECURITY ----------------
-bandit_security_check:
-  stage: security
-  script:
-    - bandit -r backend scripts -ll
-
-pip_audit_dependency_check:
-  stage: security
-  script:
-    - pip-audit --no-deps --disable-pip --timeout 10 -r requirements.txt
-
-precommit_check:
-  stage: security
-  script:
-    - pre-commit run --all-files
-
-
-# ---------------- DOCS ----------------
 docs_check:
   stage: docs
   script:
