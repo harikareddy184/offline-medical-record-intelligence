@@ -6,17 +6,18 @@ variables:
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
   PYTHONUNBUFFERED: "1"
 
+default:
+  image: python:3.12-slim
+  timeout: 5 minutes
+
 stages:
   - smoke
 
 runner_smoke:
   stage: smoke
-  tags:
-    - offline-medical-record-intelligence-local
-  timeout: 2 minutes
   script:
-    - Write-Host "Runner description $env:CI_RUNNER_DESCRIPTION"
-    - Write-Host "Runner tags $env:CI_RUNNER_TAGS"
-    - Write-Host "Project $env:CI_PROJECT_PATH"
-    - Write-Host "Commit $env:CI_COMMIT_SHORT_SHA"
+    - echo "Runner description ${CI_RUNNER_DESCRIPTION}"
+    - echo "Runner tags ${CI_RUNNER_TAGS}"
+    - echo "Project ${CI_PROJECT_PATH}"
+    - echo "Commit ${CI_COMMIT_SHORT_SHA}"
     - python --version
