@@ -10,53 +10,61 @@ variables:
 
 default:
   timeout: 2 minutes
+  tags:
+    - "medical analyzer"
 
 stages:
-  - pipeline_1
-  - pipeline_2
-  - pipeline_3
-  - pipeline_4
-  - pipeline_5
-  - pipeline_6
+  - setup
+  - validate
+  - build
+  - test
+  - security
+  - deploy
 
-pipeline_1_failed:
-  stage: pipeline_1
+setup_failed:
+  stage: setup
+  allow_failure: false
   script:
     - python --version
-    - python -c "print('Pipeline 1 of 6: intentional failed status')"
+    - python -c "print('Stage 1 of 6: setup failed intentionally')"
     - exit 1
 
-pipeline_2_failed:
-  stage: pipeline_2
+validate_failed:
+  stage: validate
   when: always
+  allow_failure: false
   script:
-    - python -c "print('Pipeline 2 of 6: intentional failed status')"
+    - python -c "print('Stage 2 of 6: validate failed intentionally')"
     - exit 1
 
-pipeline_3_failed:
-  stage: pipeline_3
+build_failed:
+  stage: build
   when: always
+  allow_failure: false
   script:
-    - python -c "print('Pipeline 3 of 6: intentional failed status')"
+    - python -c "print('Stage 3 of 6: build failed intentionally')"
     - exit 1
 
-pipeline_4_failed:
-  stage: pipeline_4
+test_failed:
+  stage: test
   when: always
+  allow_failure: false
   script:
-    - python -c "print('Pipeline 4 of 6: intentional failed status')"
+    - python -c "print('Stage 4 of 6: test failed intentionally')"
     - exit 1
 
-pipeline_5_failed:
-  stage: pipeline_5
+security_failed:
+  stage: security
   when: always
+  allow_failure: false
   script:
-    - python -c "print('Pipeline 5 of 6: intentional failed status')"
+    - python -c "print('Stage 5 of 6: security failed intentionally')"
     - exit 1
 
-pipeline_6_failed:
-  stage: pipeline_6
+deploy_failed:
+  stage: deploy
   when: always
+  allow_failure: false
   script:
-    - python -c "print('Pipeline 6 of 6: intentional failed status')"
+    - python -c "print('Stage 6 of 6: deploy failed intentionally')"
     - exit 1
