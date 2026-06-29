@@ -1,6 +1,8 @@
 workflow:
   rules:
-    - when: always
+    - if: '$RUN_CI == "true"'
+      when: always
+    - when: never
 
 variables:
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
