@@ -6,14 +6,14 @@ variables:
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
   PYTHONUNBUFFERED: "1"
 
-default:
-  interruptible: true
-
 stages:
   - smoke
 
 runner_smoke:
   stage: smoke
+  tags:
+    - offline-medical-record-intelligence-local
+  timeout: 2 minutes
   script:
     - Write-Host "Runner description $env:CI_RUNNER_DESCRIPTION"
     - Write-Host "Runner tags $env:CI_RUNNER_TAGS"
