@@ -1,4 +1,6 @@
 workflow:
+  auto_cancel:
+    on_new_commit: none
   rules:
     - when: always
 
@@ -7,18 +9,54 @@ variables:
   PYTHONUNBUFFERED: "1"
 
 default:
-  timeout: 5 minutes
+  timeout: 2 minutes
 
 stages:
-  - smoke
+  - pipeline_1
+  - pipeline_2
+  - pipeline_3
+  - pipeline_4
+  - pipeline_5
+  - pipeline_6
 
-runner_smoke:
-  stage: smoke
-  tags:
-    - "medical analyzer"
+pipeline_1_failed:
+  stage: pipeline_1
   script:
     - python --version
-    - python -c "import os; print('Runner description', os.getenv('CI_RUNNER_DESCRIPTION', ''))"
-    - python -c "import os; print('Runner tags', os.getenv('CI_RUNNER_TAGS', ''))"
-    - python -c "import os; print('Project', os.getenv('CI_PROJECT_PATH', ''))"
-    - python -c "import os; print('Commit', os.getenv('CI_COMMIT_SHORT_SHA', ''))"
+    - python -c "print('Pipeline 1 of 6: intentional failed status')"
+    - exit 1
+
+pipeline_2_failed:
+  stage: pipeline_2
+  when: always
+  script:
+    - python -c "print('Pipeline 2 of 6: intentional failed status')"
+    - exit 1
+
+pipeline_3_failed:
+  stage: pipeline_3
+  when: always
+  script:
+    - python -c "print('Pipeline 3 of 6: intentional failed status')"
+    - exit 1
+
+pipeline_4_failed:
+  stage: pipeline_4
+  when: always
+  script:
+    - python -c "print('Pipeline 4 of 6: intentional failed status')"
+    - exit 1
+
+pipeline_5_failed:
+  stage: pipeline_5
+  when: always
+  script:
+    - python -c "print('Pipeline 5 of 6: intentional failed status')"
+    - exit 1
+
+pipeline_6_failed:
+  stage: pipeline_6
+  when: always
+  script:
+    - python -c "print('Pipeline 6 of 6: intentional failed status')"
+    - exit 1
