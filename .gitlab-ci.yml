@@ -15,8 +15,6 @@ cache:
     - .cache/pre-commit
 
 default:
-  tags:
-    - offline-medical-record-intelligence-local
   before_script:
     - Write-Host "Running on GitLab runner $env:CI_RUNNER_DESCRIPTION"
     - Write-Host "Runner tags $env:CI_RUNNER_TAGS"
