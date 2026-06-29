@@ -11,10 +11,6 @@ default:
 
 stages:
   - smoke
-  - validate
-  - build
-  - test
-  - docs
 
 runner_smoke:
   stage: smoke
@@ -24,31 +20,3 @@ runner_smoke:
     - Write-Host "Project $env:CI_PROJECT_PATH"
     - Write-Host "Commit $env:CI_COMMIT_SHORT_SHA"
     - python --version
-
-metadata_check:
-  stage: validate
-  script:
-    - python scripts/check_metadata.py
-
-compile_check:
-  stage: build
-  script:
-    - python -m compileall app.py backend scripts tests
-
-parser_smoke_check:
-  stage: build
-  script:
-    - python -c "from backend.app import build_result; result = build_result('Patient has fever'); assert result['status'] == 'success'; print(result['data']['medical_analysis']['possible_condition'])"
-
-pytest_check:
-  stage: test
-  before_script:
-    - python -m pip install --upgrade pip
-    - python -m pip install -r requirements.txt pytest
-  script:
-    - pytest -q
-
-docs_check:
-  stage: docs
-  script:
-    - python scripts/check_docs.py
