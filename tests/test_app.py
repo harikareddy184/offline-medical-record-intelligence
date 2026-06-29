@@ -1,4 +1,5 @@
 from backend.app import build_result, parse_medical_text
+from backend.output_formatter import format_output
 
 
 def test_parse_medical_text_extracts_prescription_fields():
@@ -51,3 +52,21 @@ def test_build_result_declares_offline_cpu_runtime():
     assert result["meta"]["offline_mode"] is True
     assert result["meta"]["runtime"] == "CPU"
     assert result["data"]["medical_analysis"]["possible_condition"] == "Cough"
+
+
+def test_format_output_returns_consistent_json_contract():
+    formatted = format_output(
+        {"clean_text": "Patient has fever and headache."},
+        {
+            "word_count": 5,
+            "predicted_condition": "Fever",
+            "confidence_score": 0.9,
+        },
+    )
+
+    assert formatted["status"] == "success"
+    assert formatted["data"]["summary"] == "Patient has fever and headache."
+    assert formatted["data"]["word_count"] == 5
+    assert formatted["data"]["prediction"]["condition"] == "Fever"
+    assert formatted["meta"]["offline_mode"] is True
+    assert formatted["meta"]["runtime"] == "CPU"

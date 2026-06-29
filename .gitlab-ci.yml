@@ -2,11 +2,16 @@ workflow:
   rules:
     - when: always
 
+image: python:3.12-slim
+
 variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   PRE_COMMIT_HOME: "$CI_PROJECT_DIR/.cache/pre-commit"
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PYTHONUNBUFFERED: "1"
 
 cache:
+  key: "$CI_COMMIT_REF_SLUG"
   paths:
     - .cache/pip
     - .cache/pre-commit
@@ -17,6 +22,7 @@ default:
     - python -m pip install --upgrade pip setuptools wheel
     - python -m pip install -r requirements.txt
     - python -m pip install black ruff mypy pytest bandit pip-audit pre-commit streamlit
+  interruptible: true
 
 stages:
   - metadata
@@ -57,7 +63,7 @@ streamlit_entrypoint_check:
 ruff_format_check:
   stage: format
   script:
-    - ruff format .
+    - ruff format --check .
 
 black_format_check:
   stage: format
@@ -74,7 +80,7 @@ ruff_lint_check:
 mypy_type_check:
   stage: lint
   script:
-    - mypy backend scripts --ignore-missing-imports || true
+    - mypy backend scripts --ignore-missing-imports
 
 
 # ---------------- TEST ----------------
@@ -120,12 +126,12 @@ bandit_security_check:
 pip_audit_dependency_check:
   stage: security
   script:
-    - pip-audit -r requirements.txt
+    - pip-audit --no-deps --disable-pip --timeout 10 -r requirements.txt
 
 precommit_check:
   stage: security
   script:
-    - pre-commit run --all-files || true
+    - pre-commit run --all-files
 
 
 # ---------------- DOCS ----------------
