@@ -6,3 +6,4 @@ __pycache__/
 gitlab-runner.exe
 config.toml
 .runner_system_id
+builds/
