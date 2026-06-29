@@ -21,50 +21,33 @@ stages:
   - security
   - deploy
 
-setup_failed:
+setup_stage:
   stage: setup
-  allow_failure: false
   script:
     - python --version
-    - python -c "print('Stage 1 of 6: setup failed intentionally')"
-    - exit 1
+    - python -c "print('Stage 1 of 6 passed: setup')"
 
-validate_failed:
+validate_stage:
   stage: validate
-  when: always
-  allow_failure: false
   script:
-    - python -c "print('Stage 2 of 6: validate failed intentionally')"
-    - exit 1
+    - python -c "print('Stage 2 of 6 passed: validate')"
 
-build_failed:
+build_stage:
   stage: build
-  when: always
-  allow_failure: false
   script:
-    - python -c "print('Stage 3 of 6: build failed intentionally')"
-    - exit 1
+    - python -c "print('Stage 3 of 6 passed: build')"
 
-test_failed:
+test_stage:
   stage: test
-  when: always
-  allow_failure: false
   script:
-    - python -c "print('Stage 4 of 6: test failed intentionally')"
-    - exit 1
+    - python -c "print('Stage 4 of 6 passed: test')"
 
-security_failed:
+security_stage:
   stage: security
-  when: always
-  allow_failure: false
   script:
-    - python -c "print('Stage 5 of 6: security failed intentionally')"
-    - exit 1
+    - python -c "print('Stage 5 of 6 passed: security')"
 
-deploy_failed:
+deploy_stage:
   stage: deploy
-  when: always
-  allow_failure: false
   script:
-    - python -c "print('Stage 6 of 6: deploy failed intentionally')"
-    - exit 1
+    - python -c "print('Stage 6 of 6 passed: deploy')"
