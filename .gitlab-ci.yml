@@ -1,3 +1,7 @@
+workflow:
+  rules:
+    - when: always
+
 stages:
   - setup
   - validate
@@ -6,32 +10,37 @@ stages:
   - security
   - deploy
 
-setup_stage:
+default:
+  tags: []   # ensures no tag restriction
+  before_script:
+    - echo "🚀 Pipeline started"
+
+setup_job:
   stage: setup
   script:
-    - echo "Stage 1 of 6 passed setup"
+    - echo "✅ Stage 1: Setup completed"
 
-validate_stage:
+validate_job:
   stage: validate
   script:
-    - echo "Stage 2 of 6 passed validate"
+    - echo "✅ Stage 2: Validation completed"
 
-build_stage:
+build_job:
   stage: build
   script:
-    - echo "Stage 3 of 6 passed build"
+    - echo "✅ Stage 3: Build completed"
 
-test_stage:
+test_job:
   stage: test
   script:
-    - echo "Stage 4 of 6 passed test"
+    - echo "✅ Stage 4: Testing completed"
 
-security_stage:
+security_job:
   stage: security
   script:
-    - echo "Stage 5 of 6 passed security"
+    - echo "✅ Stage 5: Security checks completed"
 
-deploy_stage:
+deploy_job:
   stage: deploy
   script:
-    - echo "Stage 6 of 6 passed deploy"
+    - echo "✅ Stage 6: Deployment completed"
