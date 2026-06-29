@@ -10,37 +10,32 @@ stages:
   - security
   - deploy
 
-default:
-  tags: []   # ensures no tag restriction
-  before_script:
-    - echo "🚀 Pipeline started"
-
 setup_job:
   stage: setup
   script:
-    - echo "✅ Stage 1: Setup completed"
+    - echo "Stage 1: Setup done"
 
 validate_job:
   stage: validate
   script:
-    - echo "✅ Stage 2: Validation completed"
+    - echo "Stage 2: Validate done"
 
 build_job:
   stage: build
   script:
-    - echo "✅ Stage 3: Build completed"
+    - echo "Stage 3: Build done"
 
 test_job:
   stage: test
   script:
-    - echo "✅ Stage 4: Testing completed"
+    - echo "Stage 4: Test done"
 
 security_job:
   stage: security
   script:
-    - echo "✅ Stage 5: Security checks completed"
+    - echo "Stage 5: Security done"
 
 deploy_job:
   stage: deploy
   script:
-    - echo "✅ Stage 6: Deployment completed"
+    - echo "Stage 6: Deploy done"
