@@ -8,42 +8,30 @@ stages:
 
 setup_stage:
   stage: setup
-  tags:
-    - "medical analyzer"
   script:
-    - echo Stage 1 of 6 passed setup
+    - echo "Stage 1 of 6 passed setup"
 
 validate_stage:
   stage: validate
-  tags:
-    - "medical analyzer"
   script:
-    - echo Stage 2 of 6 passed validate
+    - echo "Stage 2 of 6 passed validate"
 
 build_stage:
   stage: build
-  tags:
-    - "medical analyzer"
   script:
-    - echo Stage 3 of 6 passed build
+    - echo "Stage 3 of 6 passed build"
 
 test_stage:
   stage: test
-  tags:
-    - "medical analyzer"
   script:
-    - echo Stage 4 of 6 passed test
+    - echo "Stage 4 of 6 passed test"
 
 security_stage:
   stage: security
-  tags:
-    - "medical analyzer"
   script:
-    - echo Stage 5 of 6 passed security
+    - echo "Stage 5 of 6 passed security"
 
 deploy_stage:
   stage: deploy
-  tags:
-    - "medical analyzer"
   script:
-    - echo Stage 6 of 6 passed deploy
+    - echo "Stage 6 of 6 passed deploy"
