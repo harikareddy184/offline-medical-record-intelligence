@@ -1,139 +1,32 @@
-# -------------------------
-# ALWAYS RUN PIPELINE
-# -------------------------
 workflow:
-  name: "Avani passed-stage pipeline"
+  name: "Avani passed pipeline"
   rules:
     - when: always
 
-# -------------------------
-# STAGES
-# -------------------------
 stages:
-  - prepare
   - validate
-  - quality
-  - test
-  - security
-  - report
-  - deploy
 
-# -------------------------
-# VARIABLES
-# -------------------------
 variables:
-  PIPELINE_OWNER: "Avani"
   GIT_DEPTH: "1"
   GIT_STRATEGY: clone
   GIT_CHECKOUT: "true"
   GIT_CLEAN_FLAGS: -ffdx
   GIT_SUBMODULE_STRATEGY: none
 
-# -------------------------
-# DEFAULT SETTINGS (FIXED)
-# -------------------------
 default:
   interruptible: false
+  timeout: 10m
   retry:
-    max: 2
+    max: 1
     when:
       - runner_system_failure
       - stuck_or_timeout_failure
       - api_failure
-      - unknown_failure
-  before_script:
+
+passed_pipeline:
+  stage: validate
+  script:
     - python --version
-
-# -------------------------
-# TEST JOB (FOR PIPELINE CHECK)
-# -------------------------
-test_job:
-  stage: prepare
-  script:
-    - echo "Pipeline is working"
-
-# -------------------------
-# PREPARE
-# -------------------------
-prepare_environment:
-  stage: prepare
-  script:
-    - python -m pip --version
-    - python -c "print('Environment ready')"
-
-# -------------------------
-# VALIDATION
-# -------------------------
-validate_project_files:
-  stage: validate
-  script:
     - python -m compileall app.py backend scripts tests
-
-validate_frontend_pwa:
-  stage: validate
-  script:
     - python scripts/check_frontend_pwa.py
-
-# -------------------------
-# QUALITY CHECKS
-# -------------------------
-quality_checks:
-  stage: quality
-  script:
-    - echo "Quality checks skipped"
-
-# -------------------------
-# TESTING
-# -------------------------
-unit_tests:
-  stage: test
-  script:
-    - echo "Tests skipped"
-
-# -------------------------
-# SECURITY
-# -------------------------
-security_scan:
-  stage: security
-  script:
-    - echo "Security scan skipped"
-
-pipeline_stage_report:
-  stage: report
-  needs:
-    - prepare_environment
-    - validate_project_files
-    - validate_frontend_pwa
-    - quality_checks
-    - unit_tests
-    - security_scan
-  script:
-    - 'Set-Content -Path pipeline-status.txt -Value "pipeline: Avani passed-stage pipeline"'
-    - 'Add-Content -Path pipeline-status.txt -Value "owner: $env:PIPELINE_OWNER"'
-    - 'Add-Content -Path pipeline-status.txt -Value "prepare: passed"'
-    - 'Add-Content -Path pipeline-status.txt -Value "validate: passed"'
-    - 'Add-Content -Path pipeline-status.txt -Value "quality: passed"'
-    - 'Add-Content -Path pipeline-status.txt -Value "test: passed"'
-    - 'Add-Content -Path pipeline-status.txt -Value "security: passed"'
-    - Get-Content pipeline-status.txt
-  artifacts:
-    when: always
-    paths:
-      - pipeline-status.txt
-
-# -------------------------
-# DEPLOY (FINAL FIX)
-# -------------------------
-deploy_streamlit:
-  stage: deploy
-  needs:
-    - prepare_environment
-    - pipeline_stage_report
-  script:
-    - echo "Streamlit app deployed externally"
-  environment:
-    name: production
-    url: https://offline-medical-record-intelligence-vg5eyddhybjtaqdwbfv4t8.streamlit.app/
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-  when: on_success
+    - echo "All pipeline checks passed"
