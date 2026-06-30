@@ -10,10 +10,23 @@ stages:
   - security
   - deploy
 
+variables:
+  GIT_DEPTH: "1"
+  GIT_STRATEGY: fetch
+  GIT_CHECKOUT: "true"
+  GIT_SUBMODULE_STRATEGY: none
+
 default:
   tags:
     - "medical analyzer"
   interruptible: true
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+      - api_failure
+      - unknown_failure
   before_script:
     - python --version
 
