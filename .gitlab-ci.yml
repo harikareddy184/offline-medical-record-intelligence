@@ -3,43 +3,50 @@ workflow:
     - when: always
 
 stages:
-  - setup
+  - prepare
   - validate
-  - build
+  - compile
+  - quality
   - test
   - security
-  - deploy
 
 default:
-  tags:
-    - "medical analyzer"
+  interruptible: true
+  before_script:
+    - python --version
 
-setup_job:
-  stage: setup
+prepare_environment:
+  stage: prepare
   script:
-    - echo "Stage 1: Setup done"
+    - python -m pip --version
+    - python -c "import backend; print('backend import ok')"
 
-validate_job:
+validate_project_files:
   stage: validate
   script:
-    - echo "Stage 2: Validate done"
+    - python scripts/check_metadata.py
+    - python scripts/check_docs.py
+    - python scripts/check_hackathon_rules.py
 
-build_job:
-  stage: build
+compile_python:
+  stage: compile
   script:
-    - echo "Stage 3: Build done"
+    - python -m compileall app.py backend scripts tests
 
-test_job:
+quality_checks:
+  stage: quality
+  script:
+    - ruff format --check .
+    - black --check .
+    - ruff check .
+    - mypy backend scripts --ignore-missing-imports
+
+unit_tests:
   stage: test
   script:
-    - echo "Stage 4: Test done"
+    - python -m pytest -q
 
-security_job:
+security_scan:
   stage: security
   script:
-    - echo "Stage 5: Security done"
-
-deploy_job:
-  stage: deploy
-  script:
-    - echo "Stage 6: Deploy done"
+    - bandit -r backend scripts -ll
