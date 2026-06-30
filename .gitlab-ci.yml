@@ -34,9 +34,7 @@ validate_project_files:
 validate_frontend_pwa:
   stage: validate
   script:
-    - if (!(Test-Path frontend\index.html)) { throw "Missing frontend index" }
-    - if (!(Test-Path frontend\manifest.webmanifest)) { throw "Missing web manifest" }
-    - if (!(Test-Path frontend\sw.js)) { throw "Missing service worker" }
+    - python -c "from pathlib import Path; import sys; files=['frontend/index.html','frontend/manifest.webmanifest','frontend/sw.js']; missing=[path for path in files if not Path(path).exists()]; print('Missing PWA files: '+', '.join(missing) if missing else 'PWA files present'); sys.exit(1 if missing else 0)"
 
 quality_checks:
   stage: quality
