@@ -34,7 +34,7 @@ validate_project_files:
 validate_frontend_pwa:
   stage: validate
   script:
-    - python -c "from pathlib import Path; import sys; files=['frontend/index.html','frontend/manifest.webmanifest','frontend/sw.js']; missing=[path for path in files if not Path(path).exists()]; print('Missing PWA files: '+', '.join(missing) if missing else 'PWA files present'); sys.exit(1 if missing else 0)"
+    - python scripts/check_frontend_pwa.py
 
 quality_checks:
   stage: quality
