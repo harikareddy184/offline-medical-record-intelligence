@@ -52,6 +52,23 @@ The repository includes `packages.txt` with `tesseract-ocr`, so Streamlit Cloud
 installs the OCR binary during deployment. The app detects the binary from
 `PATH`, which works on Linux cloud hosts and local machines.
 
+## Phase 2 Submission
+
+This project is submitted as a web application.
+
+- GitLab Pages deployment: created by the `pages` job in `.gitlab-ci.yml`
+- GitLab Environment: `production`, created under Operate -> Environments
+- Environment URL: provided by GitLab through `$CI_PAGES_URL`
+- Public reviewer app: open the `production` environment URL in GitLab
+- Offline support: the deployed browser app includes a service worker and web
+  manifest, so the text analysis workflow works after the first load without
+  network access
+
+The full local Streamlit app supports text input and image OCR. The public
+GitLab Pages app provides the core offline text-analysis workflow directly in
+the browser, with no API server or cloud calls. This project does not produce a
+CLI package, release binary, mobile APK, or mobile release asset.
+
 ## Expected JSON Output
 
 ```json
