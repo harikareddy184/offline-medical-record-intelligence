@@ -43,6 +43,30 @@ repos:
         language: system
         pass_filenames: false
 
+      - id: flake8-lint
+        name: flake8 lint check
+        entry: flake8 backend scripts app.py tests
+        language: system
+        pass_filenames: false
+
+      - id: pylint-lint
+        name: pylint lint check
+        entry: pylint backend scripts app.py
+        language: system
+        pass_filenames: false
+
+      - id: vulture-quality
+        name: vulture dead-code quality check
+        entry: vulture backend scripts tests
+        language: system
+        pass_filenames: false
+
+      - id: pyupgrade-quality
+        name: pyupgrade Python syntax quality check
+        entry: pyupgrade --py312-plus
+        language: system
+        types: [python]
+
       - id: mypy
         name: mypy type check
         entry: mypy backend scripts --ignore-missing-imports
@@ -58,5 +82,23 @@ repos:
       - id: bandit
         name: bandit security check
         entry: bandit -r backend scripts -ll
+        language: system
+        pass_filenames: false
+
+      - id: semgrep-security
+        name: semgrep security check
+        entry: semgrep --config .semgrep.yml backend scripts app.py
+        language: system
+        pass_filenames: false
+
+      - id: secret-scan
+        name: gitleaks secret scanning
+        entry: gitleaks detect --source . --config .gitleaks.toml --no-git --redact
+        language: system
+        pass_filenames: false
+
+      - id: dependency-audit
+        name: pip-audit dependency audit
+        entry: pip-audit --no-deps --disable-pip --timeout 10 -r requirements.txt
         language: system
         pass_filenames: false

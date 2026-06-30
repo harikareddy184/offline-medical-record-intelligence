@@ -38,8 +38,8 @@ def main():
     ]:
         require_file(path)
 
-    require_text("README.md", ["offline", "cpu", "tesseract", "gpl"])
-    require_text("LICENSE", ["gnu general public license", "version 3"])
+    require_text("README.md", ["offline", "cpu", "tesseract", "agpl"])
+    require_text("LICENSE", ["gnu affero general public license", "version 3"])
     require_text("apt.txt", ["tesseract-ocr"])
     require_text("packages.txt", ["tesseract-ocr"])
     require_text("backend/spec.md", ["input", "output", "offline", "cpu"])

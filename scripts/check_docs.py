@@ -23,7 +23,7 @@ def main():
             "offline",
             "tesseract",
             "structured json",
-            "gpl",
+            "agpl",
         ],
     )
     require_terms(

@@ -1,0 +1,11 @@
+rules:
+  - id: python-no-eval
+    message: Avoid eval in Python code.
+    severity: ERROR
+    languages: [python]
+    pattern: eval(...)
+  - id: python-no-exec
+    message: Avoid exec in Python code.
+    severity: ERROR
+    languages: [python]
+    pattern: exec(...)

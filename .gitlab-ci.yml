@@ -4,7 +4,14 @@ workflow:
     - when: always
 
 stages:
-  - validate
+  - format
+  - lint
+  - type_check
+  - test
+  - coverage
+  - security
+  - audit
+  - docs
 
 variables:
   GIT_DEPTH: "1"
@@ -25,10 +32,69 @@ default:
       - stuck_or_timeout_failure
       - api_failure
 
-passed_pipeline:
-  stage: validate
+format:
+  stage: format
   script:
     - python --version
+    - ruff format --check .
+
+lint:
+  stage: lint
+  script:
+    - ruff check .
+    - pylint backend scripts app.py
+    - flake8 backend scripts app.py tests
+    - vulture backend scripts tests
+    - pre-commit run pyupgrade-quality --all-files
+    - semgrep --config .semgrep.yml backend scripts app.py
+
+type_check:
+  stage: type_check
+  script:
+    - mypy backend scripts --ignore-missing-imports
+
+test:
+  stage: test
+  script:
     - python -m compileall app.py backend scripts tests
     - python scripts/check_frontend_pwa.py
-    - echo "All pipeline checks passed on the local runner"
+    - pytest -q
+
+coverage:
+  stage: coverage
+  script:
+    - coverage run -m pytest
+    - coverage report --fail-under=1
+    - coverage xml
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+    paths:
+      - coverage.xml
+    expire_in: 1 week
+
+secret_scanning:
+  stage: security
+  script:
+    - gitleaks detect --source . --config .gitleaks.toml --no-git --redact
+
+static_security:
+  stage: security
+  script:
+    - bandit -r backend scripts -ll
+    - semgrep --config .semgrep.yml backend scripts app.py
+
+dependency_audit:
+  stage: audit
+  script:
+    - pip-audit --no-deps --disable-pip --timeout 10 -r requirements.txt
+
+docs:
+  stage: docs
+  script:
+    - python scripts/check_metadata.py
+    - python scripts/check_docs.py
+    - python scripts/check_hackathon_rules.py
+    - echo "All compliance checks passed on the local runner"

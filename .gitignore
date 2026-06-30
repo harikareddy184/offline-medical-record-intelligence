@@ -1,7 +1,12 @@
 .cache/
 .pre-commit-cache/
+.pre-commit-local/
+.semgrep-cache/
 __pycache__/
 .pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
 *.pyc
 gitlab-runner.exe
 config.toml

@@ -167,6 +167,9 @@ black --check .
 ruff check .
 mypy backend scripts --ignore-missing-imports
 pytest -q
+coverage run -m pytest
+coverage report --fail-under=1
+coverage xml
 bandit -r backend scripts -ll
 pip-audit --no-deps --disable-pip --timeout 10 -r requirements.txt
 pre-commit run --all-files
@@ -174,5 +177,5 @@ pre-commit run --all-files
 
 ## License
 
-This project is licensed under GPL-3.0-or-later, a strong copyleft Free and Open
-Source Software license.
+This project is licensed under AGPL-3.0-or-later, a strong copyleft Free and Open
+Source Software license for software that may be accessed over a network.

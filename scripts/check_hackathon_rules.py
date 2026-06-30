@@ -48,10 +48,10 @@ def check_offline_first():
 def check_strong_copyleft_license():
     license_text = read("LICENSE")
     if (
-        "gnu general public license" not in license_text
+        "gnu affero general public license" not in license_text
         or "version 3" not in license_text
     ):
-        fail("License check failed. LICENSE must be GPL-3.0 strong copyleft.")
+        fail("License check failed. LICENSE must be AGPL-3.0 strong copyleft.")
 
 
 def check_system_packages():

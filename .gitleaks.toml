@@ -1,0 +1,9 @@
+title = "offline-medical-record-intelligence gitleaks config"
+
+[allowlist]
+description = "Allow documentation placeholders only"
+paths = [
+  '''README\.md''',
+  '''USER_MANUAL\.md''',
+  '''\.env\.example''',
+]

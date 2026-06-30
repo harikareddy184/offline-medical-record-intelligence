@@ -1,3 +1,23 @@
+[project]
+name = "offline-medical-record-intelligence"
+version = "0.1.0"
+description = "CPU-first offline medical record intelligence app for local OCR and structured JSON extraction."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "AGPL-3.0-or-later"
+authors = [{ name = "Sama Harika Reddy" }]
+keywords = ["offline", "medical-records", "ocr", "streamlit", "tesseract"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Web Environment",
+    "Framework :: Streamlit",
+    "Intended Audience :: Healthcare Industry",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+
 [tool.black]
 line-length = 88
 target-version = ["py312"]
@@ -8,6 +28,10 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
 
 [tool.mypy]
 python_version = "3.12"
@@ -21,6 +45,51 @@ no_implicit_optional = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+addopts = "-q"
 
 [tool.bandit]
 exclude_dirs = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["backend", "scripts"]
+
+[tool.coverage.report]
+fail_under = 1
+show_missing = true
+skip_covered = true
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+exclude = [".git", "__pycache__", ".pytest_cache", "builds"]
+
+[tool.pylint.main]
+ignore = ["__pycache__", ".pytest_cache", "builds"]
+jobs = 0
+persistent = false
+
+[tool.pylint.messages_control]
+disable = [
+    "missing-module-docstring",
+    "missing-function-docstring",
+    "too-few-public-methods",
+    "broad-exception-caught",
+    "duplicate-code",
+    "import-outside-toplevel",
+]
+
+[tool.pylint.format]
+max-line-length = 88
+
+[tool.vulture]
+paths = ["backend", "scripts", "tests"]
+min_confidence = 80
+exclude = ["builds", "__pycache__"]
+
+[tool.pyupgrade]
+py312-plus = true
+
+[tool.pip-audit]
+requirement = ["requirements.txt"]
+strict = true
