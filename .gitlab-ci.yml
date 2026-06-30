@@ -87,13 +87,11 @@ security_scan:
 # -------------------------
 deploy_streamlit:
   stage: deploy
-  needs:
-    - unit_tests
-    - security_scan
   script:
-    - echo "Streamlit app already deployed on Streamlit Cloud"
+    - echo "Deploying Streamlit App"
   environment:
     name: production
     url: https://offline-medical-record-intelligence-vg5eyddhybjtaqdwbfv4t8.streamlit.app/
-  only:
-    - main
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  when: on_success
