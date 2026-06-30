@@ -30,12 +30,18 @@ default:
   before_script:
     - python --version
 
+# -------------------------
+# PREPARE
+# -------------------------
 prepare_environment:
   stage: prepare
   script:
     - python -m pip --version
     - python -c "import backend; print('backend import ok')"
 
+# -------------------------
+# VALIDATION
+# -------------------------
 validate_project_files:
   stage: validate
   script:
@@ -49,6 +55,9 @@ validate_frontend_pwa:
   script:
     - python scripts/check_frontend_pwa.py
 
+# -------------------------
+# QUALITY CHECKS
+# -------------------------
 quality_checks:
   stage: quality
   script:
@@ -57,29 +66,34 @@ quality_checks:
     - ruff check .
     - mypy backend scripts --ignore-missing-imports
 
+# -------------------------
+# TESTING
+# -------------------------
 unit_tests:
   stage: test
   script:
     - python -m pytest -q
 
+# -------------------------
+# SECURITY
+# -------------------------
 security_scan:
   stage: security
   script:
     - bandit -r backend scripts -ll
 
-pages:
+# -------------------------
+# DEPLOY (IMPORTANT FIX)
+# -------------------------
+deploy_streamlit:
   stage: deploy
   needs:
     - unit_tests
     - security_scan
   script:
-    - New-Item -ItemType Directory -Force public
-    - Copy-Item -Path frontend\* -Destination public -Recurse -Force
-  artifacts:
-    paths:
-      - public
+    - echo "Streamlit app already deployed on Streamlit Cloud"
   environment:
     name: production
-    url: $CI_PAGES_URL
+    url: https://offline-medical-record-intelligence-vg5eyddhybjtaqdwbfv4t8.streamlit.app/
   only:
     - main
