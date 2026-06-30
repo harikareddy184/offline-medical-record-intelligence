@@ -11,6 +11,8 @@ stages:
   - security
 
 default:
+  tags:
+    - "medical analyzer"
   interruptible: true
   before_script:
     - python --version
