@@ -37,31 +37,31 @@ repos:
         language: system
         pass_filenames: false
 
-      - id: ruff-lint
+      - id: ruff
         name: ruff lint check
         entry: ruff check .
         language: system
         pass_filenames: false
 
-      - id: flake8-lint
+      - id: flake8
         name: flake8 lint check
         entry: flake8 backend scripts app.py tests
         language: system
         pass_filenames: false
 
-      - id: pylint-lint
+      - id: pylint
         name: pylint lint check
         entry: pylint backend scripts app.py
         language: system
         pass_filenames: false
 
-      - id: vulture-quality
+      - id: vulture
         name: vulture dead-code quality check
         entry: vulture backend scripts tests
         language: system
         pass_filenames: false
 
-      - id: pyupgrade-quality
+      - id: pyupgrade
         name: pyupgrade Python syntax quality check
         entry: pyupgrade --py312-plus
         language: system

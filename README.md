@@ -3,12 +3,40 @@
 MedicalExtract AI is a CPU-first, offline Streamlit app that extracts structured
 data from medical record text and prescription images.
 
+## Overview
+
+The app is designed for local review of medical documents when privacy and
+connectivity matter. It uses Tesseract OCR for images and deterministic Python
+rules for medical entity extraction, so the core workflow does not send patient
+text, prescriptions, or images to cloud APIs.
+
+Use MedicalExtract AI to:
+
+- Convert typed record text into a structured JSON summary
+- Review prescription images with local OCR
+- Identify common symptoms, medicine instructions, and missing patient fields
+- Produce explainable output that can be checked against the original record
+
 ## Problem
 
 Medical records are often stored as paper documents or scanned images. They are
 hard to search and risky to send to cloud services. This project processes the
 record locally and returns clean JSON that can be saved or copied into another
 system.
+
+## Quick Start
+
+1. Install Python 3.12 or newer.
+2. Install Tesseract OCR.
+3. Install dependencies with `python -m pip install -r requirements.txt`.
+4. Start the app with `streamlit run app.py`.
+5. Open the local Streamlit URL and upload a synthetic sample or paste text.
+
+On Debian or Ubuntu, Tesseract can be installed with:
+
+```bash
+sudo apt-get install tesseract-ocr
+```
 
 ## Features
 
@@ -21,6 +49,18 @@ system.
 - Return structured JSON
 - Run on CPU with no GPU or CUDA
 - Work offline after dependencies are installed
+
+## Repository Layout
+
+- `app.py` starts the Streamlit interface.
+- `backend/app.py` contains the offline parser and JSON response builder.
+- `backend/inference.py` connects uploaded images to OCR and parsing.
+- `frontend/` contains the static offline browser workflow and PWA assets.
+- `scripts/` contains metadata, documentation, and PWA validation checks.
+- `tests/` contains focused parser and output contract tests.
+- `.gitlab-ci.yml` defines local-runner-friendly compliance and quality jobs.
+- `.specify/` and `specs/` hold the spec-driven development templates and
+  feature specification.
 
 ## Model and Runtime
 
@@ -45,6 +85,20 @@ streamlit run app.py
 ```
 
 The older command, `streamlit run backend/app.py`, also works.
+
+## Privacy and Safety
+
+This project is educational support software. It is not a diagnostic device and
+does not replace professional medical advice. Always compare OCR and parser
+output with the original document before using it.
+
+Development rules:
+
+- Keep real patient records, names, phone numbers, addresses, images, and
+  credentials out of the repository.
+- Use synthetic examples in tests, issues, specs, and documentation.
+- Preserve offline-first behavior for core medical parsing.
+- Prefer deterministic rules unless a task explicitly asks for a model change.
 
 ## Streamlit Cloud Deployment
 
@@ -174,6 +228,16 @@ bandit -r backend scripts -ll
 pip-audit --no-deps --disable-pip --timeout 10 -r requirements.txt
 pre-commit run --all-files
 ```
+
+## Development Workflow
+
+Before opening a merge request:
+
+1. Keep the change scoped to the parser, UI, docs, or CI behavior being updated.
+2. Add or update tests when parser behavior or JSON contracts change.
+3. Run the focused checks listed above.
+4. Update `CHANGELOG.md`, specs, or user docs when behavior changes.
+5. Confirm no real patient data or secrets are included.
 
 ## License
 

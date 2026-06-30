@@ -45,7 +45,7 @@ lint:
     - pylint backend scripts app.py
     - flake8 backend scripts app.py tests
     - vulture backend scripts tests
-    - pre-commit run pyupgrade-quality --all-files
+    - pre-commit run pyupgrade --all-files
     - semgrep --config .semgrep.yml backend scripts app.py
 
 type_check:
