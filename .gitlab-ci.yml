@@ -1,6 +1,10 @@
 workflow:
+  name: "Avani passed-stage pipeline"
   rules:
     - when: always
+
+variables:
+  PIPELINE_OWNER: "Avani"
 
 stages:
   - prepare
@@ -8,6 +12,7 @@ stages:
   - quality
   - test
   - security
+  - report
   - deploy
 
 variables:
@@ -67,11 +72,33 @@ security_scan:
   script:
     - bandit -r backend scripts -ll
 
+pipeline_stage_report:
+  stage: report
+  needs:
+    - prepare_environment
+    - validate_project_files
+    - validate_frontend_pwa
+    - quality_checks
+    - unit_tests
+    - security_scan
+  script:
+    - 'Set-Content -Path pipeline-status.txt -Value "pipeline: Avani passed-stage pipeline"'
+    - 'Add-Content -Path pipeline-status.txt -Value "owner: $env:PIPELINE_OWNER"'
+    - 'Add-Content -Path pipeline-status.txt -Value "prepare: passed"'
+    - 'Add-Content -Path pipeline-status.txt -Value "validate: passed"'
+    - 'Add-Content -Path pipeline-status.txt -Value "quality: passed"'
+    - 'Add-Content -Path pipeline-status.txt -Value "test: passed"'
+    - 'Add-Content -Path pipeline-status.txt -Value "security: passed"'
+    - Get-Content pipeline-status.txt
+  artifacts:
+    when: always
+    paths:
+      - pipeline-status.txt
+
 pages:
   stage: deploy
   needs:
-    - unit_tests
-    - security_scan
+    - pipeline_stage_report
   script:
     - New-Item -ItemType Directory -Force public
     - Copy-Item -Path frontend\* -Destination public -Recurse -Force
