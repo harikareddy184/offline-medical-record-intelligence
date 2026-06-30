@@ -33,7 +33,7 @@ variables:
 # DEFAULT SETTINGS (FIXED)
 # -------------------------
 default:
-  interruptible: true
+  interruptible: false
   retry:
     max: 2
     when:
