@@ -21,8 +21,9 @@ stages:
 # -------------------------
 variables:
   GIT_DEPTH: "1"
-  GIT_STRATEGY: fetch
+  GIT_STRATEGY: clone
   GIT_CHECKOUT: "true"
+  GIT_CLEAN_FLAGS: -ffdx
   GIT_SUBMODULE_STRATEGY: none
 
 # -------------------------
@@ -63,12 +64,12 @@ prepare_environment:
 validate_project_files:
   stage: validate
   script:
-    - python -m compileall app.py backend || echo "Compile check skipped"
+    - python -m compileall app.py backend scripts tests
 
 validate_frontend_pwa:
   stage: validate
   script:
-    - echo "Frontend check skipped"
+    - python scripts/check_frontend_pwa.py
 
 # -------------------------
 # QUALITY CHECKS
