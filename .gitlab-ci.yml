@@ -1,5 +1,5 @@
 workflow:
-  name: "Avani passed pipeline"
+  name: "Avani passed pipeline - local runner"
   rules:
     - when: always
 
@@ -31,4 +31,4 @@ passed_pipeline:
     - python --version
     - python -m compileall app.py backend scripts tests
     - python scripts/check_frontend_pwa.py
-    - echo "All pipeline checks passed"
+    - echo "All pipeline checks passed on the local runner"
