@@ -5,10 +5,10 @@ workflow:
 stages:
   - prepare
   - validate
-  - compile
   - quality
   - test
   - security
+  - deploy
 
 default:
   tags:
@@ -29,11 +29,14 @@ validate_project_files:
     - python scripts/check_metadata.py
     - python scripts/check_docs.py
     - python scripts/check_hackathon_rules.py
-
-compile_python:
-  stage: compile
-  script:
     - python -m compileall app.py backend scripts tests
+
+validate_frontend_pwa:
+  stage: validate
+  script:
+    - if (!(Test-Path frontend\index.html)) { throw "Missing frontend index" }
+    - if (!(Test-Path frontend\manifest.webmanifest)) { throw "Missing web manifest" }
+    - if (!(Test-Path frontend\sw.js)) { throw "Missing service worker" }
 
 quality_checks:
   stage: quality
@@ -52,3 +55,20 @@ security_scan:
   stage: security
   script:
     - bandit -r backend scripts -ll
+
+pages:
+  stage: deploy
+  needs:
+    - unit_tests
+    - security_scan
+  script:
+    - New-Item -ItemType Directory -Force public
+    - Copy-Item -Path frontend\* -Destination public -Recurse -Force
+  artifacts:
+    paths:
+      - public
+  environment:
+    name: production
+    url: $CI_PAGES_URL
+  only:
+    - main

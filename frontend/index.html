@@ -1,34 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#14532d" />
   <title>Medical Record Intelligence</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <div class="container">
-
+  <main class="container">
     <header class="header">
-      <h1>🩺 Offline Medical Record Intelligence</h1>
-      <p>Fast • Secure • Smart Insights</p>
+      <h1>Offline Medical Record Intelligence</h1>
+      <p>Browser-based medical text analysis with structured JSON output</p>
     </header>
 
-    <div class="card">
+    <section class="card">
       <h2>Enter Patient Data</h2>
-
       <textarea id="inputText" placeholder="Paste medical report here..."></textarea>
 
-      <button onclick="processData()">Analyze Report</button>
-    </div>
+      <div class="actions">
+        <button type="button" onclick="processData()">Analyze Report</button>
+        <button type="button" class="secondary" onclick="loadExample()">Load Example</button>
+      </div>
+    </section>
 
-    <div class="card result">
-      <h2>AI Output</h2>
+    <section class="card result">
+      <h2>Structured Output</h2>
       <pre id="output">Your results will appear here...</pre>
-    </div>
-
-  </div>
+    </section>
+  </main>
 
   <script src="app.js"></script>
 </body>
