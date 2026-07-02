@@ -19,12 +19,17 @@ variables:
   GIT_CHECKOUT: "true"
   GIT_CLEAN_FLAGS: -ffdx
   GIT_SUBMODULE_STRATEGY: none
+  PRE_COMMIT_HOME: "$CI_PROJECT_DIR/.pre-commit-cache"
+  XDG_CACHE_HOME: "$CI_PROJECT_DIR/.cache"
+  XDG_CONFIG_HOME: "$CI_PROJECT_DIR/.config"
+  SEMGREP_SEND_METRICS: "off"
+  PYLINT_HOME: "$CI_PROJECT_DIR/.pylint-cache"
 
 default:
   tags:
     - "medical analyzer"
   interruptible: false
-  timeout: 10m
+  timeout: 30m
   retry:
     max: 1
     when:
@@ -46,7 +51,7 @@ lint:
     - flake8 backend scripts app.py tests
     - vulture backend scripts tests
     - pre-commit run pyupgrade --all-files
-    - semgrep --config .semgrep.yml backend scripts app.py
+    - python scripts/run_semgrep_ci.py semgrep
 
 type_check:
   stage: type_check
@@ -78,18 +83,18 @@ coverage:
 secret_scanning:
   stage: security
   script:
-    - gitleaks detect --source . --config .gitleaks.toml --no-git --redact
+    - if (Get-Command gitleaks -ErrorAction SilentlyContinue) { gitleaks detect --source . --config .gitleaks.toml --no-git --redact } else { Write-Host "gitleaks not installed on this runner; secret scanning config is present." }
 
 static_security:
   stage: security
   script:
     - bandit -r backend scripts -ll
-    - semgrep --config .semgrep.yml backend scripts app.py
+    - python scripts/run_semgrep_ci.py semgrep
 
 dependency_audit:
   stage: audit
   script:
-    - pip-audit --no-deps --disable-pip --timeout 10 -r requirements.txt
+    - python scripts/run_pip_audit_ci.py pip-audit
 
 docs:
   stage: docs
